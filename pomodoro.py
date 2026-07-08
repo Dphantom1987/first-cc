@@ -52,11 +52,11 @@ class PomodoroTimer:
         MODE_LONG_BREAK:  "🌴 长休息",
     }
 
-    # 模式主题色
+    # 模式主题色（狗狗卡通风格）
     MODE_COLORS = {
-        MODE_WORK:        "#E74C3C",  # 番茄红 — 专注
-        MODE_SHORT_BREAK: "#2ECC71",  # 薄荷绿 — 放松
-        MODE_LONG_BREAK:  "#3498DB",  # 天空蓝 — 深度休息
+        MODE_WORK:        "#F4A460",  # 沙棕色 — 专注
+        MODE_SHORT_BREAK: "#8FBC8F",  # 鼠尾草绿 — 放松
+        MODE_LONG_BREAK:  "#87CEEB",  # 天空蓝 — 深度休息
     }
 
     # ============================================================
@@ -67,10 +67,10 @@ class PomodoroTimer:
 
         # ----- 主窗口 -----
         self.root = tk.Tk()
-        self.root.title("🍅 番茄钟")
-        self.root.geometry("420x500")
+        self.root.title("🐶 狗狗番茄钟")
+        self.root.geometry("420x520")
         self.root.minsize(360, 440)
-        self.root.configure(bg="#F5F0EB")  # 暖白背景
+        self.root.configure(bg="#FFF8E1")  # 奶油黄 — 卡通风格
 
         # 关闭窗口行为
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -138,12 +138,12 @@ class PomodoroTimer:
     def _setup_ui(self):
         """构建全部界面组件"""
         root = self.root
-        bg   = "#F5F0EB"
+        bg   = "#FFF8E1"  # 奶油黄卡通背景
 
         # ---- 顶部标题 ----
         self.title_label = tk.Label(
-            root, text="🍅 番茄钟", font=("Microsoft YaHei", 18, "bold"),
-            bg=bg, fg="#2C3E50",
+            root, text="🐶 狗狗番茄钟", font=("Microsoft YaHei", 18, "bold"),
+            bg=bg, fg="#5D4E37",
         )
         self.title_label.pack(pady=(20, 8))
 
@@ -182,6 +182,9 @@ class PomodoroTimer:
             fill="#7F8C8D",
         )
 
+        # 绘制卡通小狗装饰
+        self._draw_decorations()
+
         # ---- 模式标签 ----
         self.mode_label = tk.Label(
             root, text=self.MODE_LABELS[self.current_mode],
@@ -204,10 +207,10 @@ class PomodoroTimer:
         self.session_dots = []
         for i in range(self.settings["sessions_before_long"]):
             dot = tk.Label(
-                self.dots_frame, text="○", font=("Arial", 16),
+                self.dots_frame, text="🐾", font=("Segoe UI Emoji", 14),
                 bg=bg, fg="#D5C8B5",
             )
-            dot.pack(side=tk.LEFT, padx=4)
+            dot.pack(side=tk.LEFT, padx=3)
             self.session_dots.append(dot)
 
         # ---- 控制按钮 ----
@@ -222,14 +225,14 @@ class PomodoroTimer:
 
         self.start_btn = tk.Button(
             btn_frame, text="▶  开 始", command=self.start_timer,
-            bg="#E74C3C", fg="#FFFFFF", activebackground="#C0392B",
+            bg="#F4A460", fg="#FFFFFF", activebackground="#D28C4A",
             activeforeground="#FFFFFF", **btn_style,
         )
         self.start_btn.pack(side=tk.LEFT, padx=5)
 
         self.pause_btn = tk.Button(
             btn_frame, text="⏸  暂 停", command=self.pause_timer,
-            bg="#F39C12", fg="#FFFFFF", activebackground="#E67E22",
+            bg="#DEB887", fg="#FFFFFF", activebackground="#C9A46C",
             activeforeground="#FFFFFF", state=tk.DISABLED, **btn_style,
         )
         self.pause_btn.pack(side=tk.LEFT, padx=5)
@@ -280,6 +283,91 @@ class PomodoroTimer:
         return self.timer_canvas.create_oval(
             x - r, y - r, x + r, y + r, **kwargs
         )
+
+    # ----------------------------------------------------------
+    # 卡通小狗装饰
+    # ----------------------------------------------------------
+    def _draw_paw_print(self, x, y, size=18, color="#D4A574"):
+        """在 Canvas 上画一个小狗爪印 🐾"""
+        # 肉垫（大椭圆）
+        pw, ph = size * 0.55, size * 0.45
+        self.timer_canvas.create_oval(
+            x - pw, y - ph, x + pw, y + ph,
+            fill=color, outline="", tags="deco",
+        )
+        # 4 个脚趾（小圆）
+        tr = size * 0.16
+        offsets = [
+            (-size * 0.32, -size * 0.32),
+            (-size * 0.10, -size * 0.48),
+            ( size * 0.10, -size * 0.48),
+            ( size * 0.32, -size * 0.32),
+        ]
+        for dx, dy in offsets:
+            self.timer_canvas.create_oval(
+                x + dx - tr, y + dy - tr,
+                x + dx + tr, y + dy + tr,
+                fill=color, outline="", tags="deco",
+            )
+
+    def _draw_puppy_face(self, x, y, size=20):
+        """在 Canvas 上画一个可爱的卡通小狗脸 🐶"""
+        # 耳朵（垂耳）
+        ew, eh = size * 0.35, size * 0.55
+        self.timer_canvas.create_oval(
+            x - size * 0.65, y - size * 0.9,
+            x - size * 0.05, y - size * 0.05,
+            fill="#C4956A", outline="#B8875A", width=1, tags="deco",
+        )
+        self.timer_canvas.create_oval(
+            x + size * 0.05, y - size * 0.9,
+            x + size * 0.65, y - size * 0.05,
+            fill="#C4956A", outline="#B8875A", width=1, tags="deco",
+        )
+        # 脸蛋
+        fr = size
+        self.timer_canvas.create_oval(
+            x - fr, y - fr, x + fr, y + fr,
+            fill="#F5DEB3", outline="#D4A574", width=2, tags="deco",
+        )
+        # 眼睛
+        er = size * 0.1
+        for ex in [-size * 0.28, size * 0.28]:
+            self.timer_canvas.create_oval(
+                x + ex - er, y - size * 0.12 - er,
+                x + ex + er, y - size * 0.12 + er,
+                fill="#2C3E50", tags="deco",
+            )
+        # 鼻子
+        nr = size * 0.13
+        self.timer_canvas.create_oval(
+            x - nr, y + size * 0.1 - nr,
+            x + nr, y + size * 0.1 + nr,
+            fill="#E74C3C", tags="deco",
+        )
+        # 微笑嘴巴
+        self.timer_canvas.create_arc(
+            x - size * 0.22, y + size * 0.02,
+            x + size * 0.22, y + size * 0.38,
+            start=0, extent=-180, style="arc", width=1.5,
+            outline="#2C3E50", tags="deco",
+        )
+
+    def _draw_decorations(self):
+        """绘制卡通小狗背景装饰"""
+        # 小狗脸 — 画布顶部中央
+        self._draw_puppy_face(110, 20, size=20)
+
+        # 4 个爪印分布在计时圆环四周
+        paw_color = "#D4A574"
+        self._draw_paw_print(42, 55, size=16, color=paw_color)
+        self._draw_paw_print(178, 55, size=14, color=paw_color)
+        self._draw_paw_print(38, 178, size=15, color=paw_color)
+        self._draw_paw_print(182, 178, size=13, color=paw_color)
+
+        # 2 个额外小爪印
+        self._draw_paw_print(65, 170, size=10, color="#E8CDA8")
+        self._draw_paw_print(160, 60, size=9, color="#E8CDA8")
 
     def _draw_progress_arc(self, progress: float):
         """
@@ -332,7 +420,7 @@ class PomodoroTimer:
         mode_label = self.MODE_LABELS[self.current_mode]
         # 去掉 emoji 用于标题
         title_mode = mode_label.split(" ", 1)[1] if " " in mode_label else mode_label
-        self.root.title(f"🍅 {title_mode} - {time_str}")
+        self.root.title(f"🐶 {title_mode} - {time_str}")
 
         # 模式标签颜色
         self.mode_label.config(
@@ -346,12 +434,12 @@ class PomodoroTimer:
             text=f"第 {self.completed_sessions + 1} / {total_sessions} 个番茄钟"
         )
 
-        # 进度点
+        # 进度点（爪印）
         for i, dot in enumerate(self.session_dots):
             if i < self.completed_sessions:
-                dot.config(text="●", fg=self.MODE_COLORS[self.MODE_WORK])
+                dot.config(fg="#D4A574")  # 已完成的爪印 — 深色
             else:
-                dot.config(text="○", fg="#D5C8B5")
+                dot.config(fg="#E8D5C4")  # 未完成的爪印 — 浅色
 
         # 按钮状态
         if self.is_running:
@@ -481,7 +569,7 @@ class PomodoroTimer:
         win.title("⚙  设 置")
         win.geometry("360x320")
         win.resizable(False, False)
-        win.configure(bg="#F5F0EB")
+        win.configure(bg="#FFF8E1")
         win.transient(self.root)
         win.grab_set()
 
@@ -498,7 +586,7 @@ class PomodoroTimer:
         y = ry + (rh - wh) // 2
         win.geometry(f"{ww}x{wh}+{x}+{y}")
 
-        bg = "#F5F0EB"
+        bg = "#FFF8E1"  # 奶油黄卡通背景
         entry_style = {
             "font": ("Microsoft YaHei", 11),
             "width": 5,
@@ -598,10 +686,10 @@ class PomodoroTimer:
             self.session_dots.clear()
             for i in range(sessions_num):
                 dot = tk.Label(
-                    self.dots_frame, text="○", font=("Arial", 16),
-                    bg="#F5F0EB", fg="#D5C8B5",
+                    self.dots_frame, text="🐾", font=("Segoe UI Emoji", 14),
+                    bg="#FFF8E1", fg="#D5C8B5",
                 )
-                dot.pack(side=tk.LEFT, padx=4)
+                dot.pack(side=tk.LEFT, padx=3)
                 self.session_dots.append(dot)
 
             # 如果已完成数超过新的上限，重置
